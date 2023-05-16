@@ -1,0 +1,17 @@
+{
+  "name": "IUT Average Mark Calculator",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "description": "Calculates your average marks on the IUT website.",
+  "content_scripts": [
+    {
+      "matches": ["https://iut-rcc-intranet.univ-reims.fr/fr/tableau-de-bord"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Click here to open the menu",
+    "default_popup": "popup.html"
+  },
+  "permissions": []
+}
