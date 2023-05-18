@@ -309,6 +309,7 @@ buttonMark.addEventListener('click', (e) =>
             {
                 loader.style.display = 'none';
                 e.target.classList.add('disabled');
+                document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
             };
         };
     });
