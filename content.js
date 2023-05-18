@@ -204,9 +204,8 @@ buttonMark.addEventListener('click', (e) =>
                 const coefficient = tdParent.textContent.match(/\((.*?)\)/gm)[0].split('(')[1].split(')')[0];
 
                 // Si l'étiquette n'a jamais été rencontrée, ajoute une nouvelle propriété à l'objet
-                if (!matieresParEtiquettes[nomEtiquette]) {
+                if (!matieresParEtiquettes[nomEtiquette])
                     matieresParEtiquettes[nomEtiquette] = [];
-                }
 
                 // Ajoute la matière à la liste des matières associées à l'étiquette
                 matieresParEtiquettes[nomEtiquette].push({ nom: nomMatiere, coefficient: coefficient });
@@ -224,9 +223,8 @@ buttonMark.addEventListener('click', (e) =>
                     if (moyennes[courseCode]) 
                     {
                         if (Utils.isEmpty(linkedData[category])) 
-                        {
                             linkedData[category] = [];
-                        }
+                        
                         linkedData[category].push(
                         {
                             "nom": course.nom,
@@ -238,11 +236,13 @@ buttonMark.addEventListener('click', (e) =>
             };
 
             // Calculer la moyenne des notes pour chaque étiquette
-            for (const category in linkedData) {
+            for (const category in linkedData) 
+            {
                 const courses = linkedData[category];
                 let sum = 0;
                 let coef = 0;
-                for (const course of courses) {
+                for (const course of courses) 
+                {
                     sum += (parseFloat(course.valeur) * parseFloat(course.coefficient));
                     coef += parseFloat(course.coefficient);
                 }
