@@ -258,6 +258,7 @@ buttonMark.addEventListener('click', (e) =>
 
             const col = document.createElement('div');
             col.classList.add('col-sm-12', 'col-md-6', 'fade-in');
+            col.style.margin = "0 auto";
 
             const card = document.createElement('div');
             card.classList.add('card');
@@ -295,7 +296,7 @@ buttonMark.addEventListener('click', (e) =>
             {
                 const td = document.createElement('td');
                 td.classList.add('text-center');
-                td.innerHTML = `<span class="badge ${parseFloat(etiquette[etiquette.length - 1].moyenne) < 10 ? "bg-danger" : parseFloat(etiquette[etiquette.length - 1].moyenne) <= 12 ? "bg-warning" : "bg-success"}">${parseFloat(etiquette[etiquette.length - 1].moyenne)}</span>`;
+                td.innerHTML = `<span class="fs-11 badge ${parseFloat(etiquette[etiquette.length - 1].moyenne) < 10 ? "bg-danger" : parseFloat(etiquette[etiquette.length - 1].moyenne) <= 12 ? "bg-warning" : "bg-success"}">${parseFloat(etiquette[etiquette.length - 1].moyenne)}</span>`;
                 trBody.append(td);
             };
             tbody.append(trBody);
