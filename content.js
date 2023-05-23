@@ -136,6 +136,29 @@ function createButton()
     headerInfo.append(right);
 }
 
+
+// Marks alert
+const numberMarks = Number.parseInt(localStorage.getItem('numberMarks'));
+const newNumberMarks = Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
+console.log(numberMarks, newNumberMarks);
+
+if (newNumberMarks !== numberMarks)
+{
+    const header = document.querySelector('.header');
+    const headerInfo = document.createElement('div');
+    headerInfo.classList.add('header-action');
+
+    const alert = document.createElement('div');
+    alert.classList.add('alert', 'alert-info');
+    alert.innerHTML = "<strong> Vous avez de nouvelles notes ! <strong/>";
+
+    headerInfo.append(alert);
+    header.append(headerInfo);
+
+    localStorage.setItem('numberMarks', document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
+}
+
+// Action after click
 const button = createButton();
 const buttonMark = document.getElementById('buttonMark');
 buttonMark.addEventListener('click', (e) =>
