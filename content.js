@@ -138,7 +138,7 @@ function createButton()
 
 
 // Marks alert
-const numberMarks = Number.parseInt(localStorage.getItem('numberMarks'));
+const numberMarks = Utils.isEmpty(localStorage.getItem('numberMarks')) ? Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length) : Number.parseInt(localStorage.getItem('numberMarks'));
 const newNumberMarks = Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
 console.log(numberMarks, newNumberMarks);
 
@@ -155,8 +155,8 @@ if (newNumberMarks !== numberMarks)
     headerInfo.append(alert);
     header.append(headerInfo);
 
-    localStorage.setItem('numberMarks', document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
 }
+localStorage.setItem('numberMarks', newNumberMarks);
 
 // Action after click
 const button = createButton();
