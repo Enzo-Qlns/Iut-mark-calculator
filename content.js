@@ -44,6 +44,9 @@ const Utils =
         }
         return false;
     },
+    boolToValue(bool) {
+        return bool ? 'OUI' : 'NON';
+    }
 }
 
 function getName(onResponse = undefined) {
@@ -134,6 +137,68 @@ function createButton() {
     headerInfo.append(right);
 }
 
+function createCardBody(content, title, colLength = 6) {
+    const col = document.createElement('div');
+    col.classList.add('col-sm-12', 'col-md-' + colLength, 'fade-in');
+    col.style.margin = "0 auto";
+
+    const card = document.createElement('div');
+    card.classList.add('card');
+    col.append(card);
+
+    const header = document.createElement('header');
+    header.classList.add('card-header');
+    header.innerHTML = '<h4 class="card-title">' + title + '</h4>';
+
+    const card_body = document.createElement('div');
+    card_body.classList.add('card-body');
+    card.append(header, card_body);
+
+    if (content instanceof HTMLElement)
+        card_body.appendChild(content);
+    else
+        card_body.innerHTML = content;
+
+    return col;
+}
+
+function createChart(data, type, xaxiscategories) {
+    var options = {
+        series: [{
+            data: data
+        }],
+        chart: {
+            type: type,
+            height: 350
+        },
+        colors: [
+            function ({ value }) {
+                if (value >= 12)
+                    return "#15c377";
+                else if (value === 10)
+                    return "#faa64b";
+                else
+                    return "#f96868";
+            }
+        ],
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                horizontal: false,
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            categories: xaxiscategories
+        },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    return chart.render();
+}
+
 // Add header
 var styleElement = document.createElement('link');
 styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
@@ -161,7 +226,7 @@ if (newNumberMarks !== numberMarks) {
 localStorage.setItem('numberMarks', newNumberMarks);
 
 // Action after click
-const button = createButton();
+createButton();
 const buttonMark = document.getElementById('buttonMark');
 buttonMark.addEventListener('click', (e) => {
     const loader = document.getElementById('loader');
@@ -264,33 +329,22 @@ buttonMark.addEventListener('click', (e) => {
                 linkedData[category].push({ "moyenne": Utils.roundValue(average, 2) });
             }
 
-            console.log(linkedData);
+            // console.log(linkedData);
+            let isAccepted = true;
+            for (const [domaine, etiquette] of Object.entries(linkedData)) {
+                if (Number.parseFloat(etiquette[etiquette.length - 1].moyenne) < 10)
+                    isAccepted = false;
+            };
 
             // Generation du code HTML
             const content = document.querySelector('#mainContent .row');
-
-            const col = document.createElement('div');
-            col.classList.add('col-sm-12', 'col-md-6', 'fade-in');
-            col.style.margin = "0 auto";
-
-            const card = document.createElement('div');
-            card.classList.add('card');
-            col.append(card);
-
-            const header = document.createElement('header');
-            header.classList.add('card-header');
-            header.innerHTML = '<h4 class="card-title">Vos moyennes</h4>';
-
-            const card_body = document.createElement('div');
-            card_body.classList.add('card-body');
-            card.append(header, card_body);
+            const firstChild = document.querySelector("#mainContent > div > div.col-sm-12:first-child");
 
             const table = document.createElement('table');
             table.classList.add('table', 'table-border', 'table-striped');
 
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
-            card_body.append(table)
 
             for (const [domaine] of Object.entries(linkedData)) {
                 const th = document.createElement('th');
@@ -309,38 +363,34 @@ buttonMark.addEventListener('click', (e) => {
                 trBody.append(td);
             };
             tbody.append(trBody);
-
             table.append(thead, tbody);
 
-            const firstChild = document.querySelector("#mainContent > div > div.col-sm-12:first-child");
-            content.insertBefore(col, firstChild);
-
+            const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
 
             // ==== CHART ====
-            const colChart = document.createElement('div');
-            colChart.classList.add('col-sm-12', 'col-md-5', 'fade-in');
-            colChart.style.margin = "0 auto";
-
-            const cardChart = document.createElement('div');
-            cardChart.classList.add('card');
-            colChart.append(cardChart);
-
-            const headerChart = document.createElement('header');
-            headerChart.classList.add('card-header');
-            headerChart.innerHTML = '<h4 class="card-title">Aperçu de vos moyennes</h4>';
-
-            const card_bodyChart = document.createElement('div');
-            card_bodyChart.classList.add('card-body');
-            cardChart.append(headerChart, card_bodyChart);
-
             const divChart = document.createElement('div')
             divChart.id = "chart";
 
-            card_bodyChart.append(divChart);
+            const olIsAccepted = document.createElement('ol')
+            olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
+            const liIsAccepted = document.createElement('li');
+            liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
+            liIsAccepted.innerHTML = '<strong>Validation: </strong> ' + Utils.boolToValue(isAccepted);
+            olIsAccepted.append(liIsAccepted);
 
-            content.insertBefore(colChart, firstChild);
+            const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
+            const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
 
-            if (!Utils.isEmpty(colChart.innerHTML)) {
+            const colLeft = document.createElement('div');;
+            colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
+            colLeft.append(isAcceptedHtml, tableMarkHtml);
+
+            // content.insertBefore(isAcceptedHtml, firstChild);
+            // content.insertBefore(, firstChild);
+            content.insertBefore(colLeft, firstChild);
+            content.insertBefore(divChartHtml, firstChild);
+
+            if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
                 loader.style.display = 'none';
                 e.target.classList.add('disabled');
                 document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
@@ -351,42 +401,9 @@ buttonMark.addEventListener('click', (e) => {
             for (const [domaine, etiquette] of Object.entries(linkedData)) {
                 dataMarks.push(etiquette[etiquette.length - 1].moyenne);
                 dataDomain.push(domaine);
-            }
-
-            var options = {
-                series: [{
-                    data: dataMarks
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 350
-                },
-                colors: [
-                    function ({ value }) {
-                        if (value >= 12)
-                            return "#15c377";
-                        else if (value === 10)
-                            return "#faa64b";
-                        else
-                            return "#f96868";
-                    }
-                ],
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        horizontal: false,
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                xaxis: {
-                    categories: dataDomain
-                },
             };
 
-            var chart = new ApexCharts(document.querySelector("#chart"), options);
-            chart.render();
+            createChart(dataMarks, 'bar', dataDomain);
         };
     });
 });
