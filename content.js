@@ -57,7 +57,7 @@ function getName(onResponse = undefined) {
         .then(response => response.text())
         .then(function (html) {
             // Callback response
-            const matches = html.matchAll(/mailto:(\w+.\w+)/gm);
+            const matches = html.matchAll(/mailto:([\w.-]+)@/gm);
             for (const match of matches)
                 onResponse(match[1]);
         })
