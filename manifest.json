@@ -1,6 +1,6 @@
 {
   "name": "Calcule ta moyenne! (Iut)",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "manifest_version": 3,
   "description": "Calculez vos moyennes sur le site de l'IUT.",
   "content_scripts": [

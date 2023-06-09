@@ -217,7 +217,7 @@ if (newNumberMarks !== numberMarks) {
 
     const alert = document.createElement('div');
     alert.classList.add('alert', 'alert-info');
-    alert.innerHTML = "<strong> Vous avez de nouvelles notes ! <strong/>";
+    alert.innerHTML = "<strong class='fw-semibold'> Vous avez de nouvelles notes ! <strong/>";
 
     headerInfo.append(alert);
     header.append(headerInfo);
@@ -372,7 +372,7 @@ buttonMark.addEventListener('click', (e) => {
             olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
             const liIsAccepted = document.createElement('li');
             liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
-            liIsAccepted.innerHTML = '<strong>Validation: </strong> ' + Utils.boolToValue(isAccepted);
+            liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
             olIsAccepted.append(liIsAccepted);
             const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
 
