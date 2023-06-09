@@ -329,7 +329,7 @@ buttonMark.addEventListener('click', (e) => {
                 linkedData[category].push({ "moyenne": Utils.roundValue(average, 2) });
             }
 
-            // console.log(linkedData);
+            console.log(linkedData);
             let isAccepted = true;
             for (const [domaine, etiquette] of Object.entries(linkedData)) {
                 if (Number.parseFloat(etiquette[etiquette.length - 1].moyenne) < 10)
@@ -366,20 +366,21 @@ buttonMark.addEventListener('click', (e) => {
             table.append(thead, tbody);
 
             const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
-
-            // ==== CHART ====
-            const divChart = document.createElement('div')
-            divChart.id = "chart";
-
+            
+            // ==== IS ACCEPTED ====
             const olIsAccepted = document.createElement('ol')
             olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
             const liIsAccepted = document.createElement('li');
             liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
             liIsAccepted.innerHTML = '<strong>Validation: </strong> ' + Utils.boolToValue(isAccepted);
             olIsAccepted.append(liIsAccepted);
+            const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
+
+            // ==== CHART ====
+            const divChart = document.createElement('div')
+            divChart.id = "chart";
 
             const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
-            const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
 
             const colLeft = document.createElement('div');;
             colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
