@@ -193,16 +193,15 @@ const numberMarks = Utils.isEmpty(localStorage.getItem('numberMarks')) ? Number.
 const newNumberMarks = Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
 console.log(numberMarks, newNumberMarks);
 
-if (newNumberMarks != numberMarks) 
+getName(() =>
 {
-    getName(() =>
+    request_note((doc) => 
     {
-        request_note((doc) => 
+        if (!Utils.isEmpty(doc))
         {
             // create object with domaine and mark
             let notes = listNote(doc);
             let domaines = listDomaine(doc);
-            const lastObject = JSON.parse(localStorage.getItem('marks'));
             const differenceObject = [];
             
             const currentObject = {};
@@ -215,34 +214,38 @@ if (newNumberMarks != numberMarks)
                 
                 currentObject[key].push(value);
             }
+            const lastObject = Utils.isEmpty(localStorage.getItem('marks')) ? currentObject : JSON.parse(localStorage.getItem('marks'));
 
-            for (let key in currentObject)
-                if (currentObject[key].length != lastObject[key].length)
-                    for (let i = 2; i < 4; i++)
-                        if (!Utils.isEmpty(currentObject[key][i]))
-                            differenceObject.push({"domaine": key, "note": currentObject[key][i]});
+            if (newNumberMarks != numberMarks)
+            {
+                for (let key in currentObject)
+                    if (currentObject[key].length != lastObject[key].length)
+                        for (let i = 2; i < 4; i++)
+                            if (!Utils.isEmpty(currentObject[key][i]))
+                                differenceObject.push({"domaine": key, "note": currentObject[key][i]});
+                
+                const header = document.querySelector('.header');
+                const headerInfo = document.createElement('div');
+                headerInfo.classList.add('header-action');
             
-            const header = document.querySelector('.header');
-            const headerInfo = document.createElement('div');
-            headerInfo.classList.add('header-action');
-        
-            const alert = document.createElement('div');
-            alert.id = 'alertMark';
-            alert.classList.add('alert', 'alert-info');
-            alert.innerHTML = 
-                `<div>
-                    <strong class='fw-semibold'> Vous avez ${differenceObject.length} nouvelle(s) note(s) ! <strong/><br>
-                </div>`;
+                const alert = document.createElement('div');
+                alert.id = 'alertMark';
+                alert.classList.add('alert', 'alert-info');
+                alert.innerHTML = 
+                    `<div>
+                        <strong class='fw-semibold'> Vous avez ${differenceObject.length} nouvelle(s) note(s) ! <strong/><br>
+                    </div>`;
 
-            for (let element of differenceObject)
-                alert.innerHTML += `<div><span class='fw-semibold'>${element.domaine}:</span> ${element.note}</div>`
-        
-            headerInfo.append(alert);
-            header.append(headerInfo);
-            localStorage.setItem('marks', JSON.stringify(lastObject));
-        });
+                for (let element of differenceObject)
+                    alert.innerHTML += `<div><span class='fw-semibold'>${element.domaine}:</span> ${element.note}</div>`
+            
+                headerInfo.append(alert);
+                header.append(headerInfo);
+            }
+            localStorage.setItem('marks', JSON.stringify(currentObject));
+        };
     });
-};
+});
 localStorage.setItem('numberMarks', newNumberMarks);
 
 // Action after click
@@ -409,7 +412,7 @@ buttonMark.addEventListener('click', (e) => {
             content.insertBefore(colLeft, firstChild);
             content.insertBefore(divChartHtml, firstChild);
 
-            if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML) && !Utils.isEmpty(document.getElementById('alertMark'))) {
+            if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
                 loader.style.display = 'none';
                 e.target.classList.add('disabled');
                 document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
