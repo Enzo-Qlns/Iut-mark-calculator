@@ -11,7 +11,7 @@
 
 <h2>Installation</h2>
 
-<p>Pour installer cette extension, suivez les étapes suivantes :</p>
+<p>Pour installer l'extension, suivez les étapes suivantes :</p>
 
 <ol>
   <li>Rendez-vous sur le Chrome Web Store</li>
