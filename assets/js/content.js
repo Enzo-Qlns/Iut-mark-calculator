@@ -94,10 +94,8 @@ function listNote(document) {
 function listCoef(document) {
     var coefArray = [];
     const coefs = document.querySelectorAll("table > tbody > tr > td:nth-child(6)");
-    for (coef of coefs) {
-        var coefParse = Number.parseFloat(coef.textContent);
-        coefArray.push(coefParse);
-    }
+    for (coef of coefs)
+        coefArray.push(Number.parseFloat(coef.textContent));
     return coefArray;
 }
 
@@ -106,7 +104,6 @@ function listDomaine(document) {
     const doms = document.querySelectorAll("table > tbody > tr > td:nth-child(1)");
     for (dom of doms)
         domArray.push(dom.textContent);
-
     return domArray;
 }
 
@@ -199,6 +196,23 @@ getName(() =>
     {
         if (!Utils.isEmpty(doc))
         {
+            // const currentObject = {
+            //     "Bonification S2": [null],
+            //     "R2.01": [14, 13.5],
+            //     "R2.02": [11],
+            //     "R2.03": [15.04, 14.5],
+            //     "R2.04": [15, 17],
+            //     "R2.05": [14.91, 13],
+            //     "R2.06": [20, 19],
+            //     "R2.07": [18, 15],
+            //     "R2.08": [14, 16, 18, 20],
+            //     "R2.12-All": [18, 14.5],
+            //     "R2.13": [18.2, 20],
+            //     "R2.14": [12.5, 15.5, 16],
+            //     "STAGE": [17, 13.5]
+            // }
+              
+
             // create object with domaine and mark
             let notes = listNote(doc);
             let domaines = listDomaine(doc);
@@ -214,7 +228,9 @@ getName(() =>
                 
                 currentObject[key].push(value);
             }
+
             const lastObject = Utils.isEmpty(localStorage.getItem('marks')) ? currentObject : JSON.parse(localStorage.getItem('marks'));
+            localStorage.setItem('marks', JSON.stringify(currentObject));
 
             if (newNumberMarks != numberMarks)
             {
@@ -242,7 +258,6 @@ getName(() =>
                 headerInfo.append(alert);
                 header.append(headerInfo);
             }
-            localStorage.setItem('marks', JSON.stringify(currentObject));
         };
     });
 });
