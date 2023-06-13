@@ -36,7 +36,7 @@
 
 <ol>
   <li>Cliquez sur le bouton "Afficher vos moyennes" pour afficher vos moyennes.</li>
-  <li>Un aperçu de vos moyennes seront affichés, la validation ou non de votre semestre ainsi qu'un graphique illustrera vos moyennes.</li>
+  <li>Un aperçu de vos moyennes sera affiché, la validation ou non de votre semestre ainsi qu'un graphique illustrera vos moyennes.</li>
 </ol>
 
 <h2>Contributions</h2>
