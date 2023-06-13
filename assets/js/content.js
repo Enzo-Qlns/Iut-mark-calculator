@@ -239,7 +239,7 @@ if (newNumberMarks != numberMarks)
         
             headerInfo.append(alert);
             header.append(headerInfo);
-            // localStorage.setItem('marks', JSON.stringify(lastObject));
+            localStorage.setItem('marks', JSON.stringify(lastObject));
         });
     });
 };
