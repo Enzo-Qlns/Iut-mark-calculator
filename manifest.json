@@ -15,6 +15,5 @@
     "default_popup": "popup.html",
     "default_icon": "assets/img/mark_icon.png"
   },
-  "update_url": "https://iut-rcc-intranet.univ-reims.fr/fr/tableau-de-bord  ",
   "permissions": []
 }
