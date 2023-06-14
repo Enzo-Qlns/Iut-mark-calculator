@@ -188,6 +188,7 @@ document.head.appendChild(styleElement);
 // Marks alert
 const numberMarks = Utils.isEmpty(localStorage.getItem('numberMarks')) ? Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length) : Number.parseInt(localStorage.getItem('numberMarks'));
 const newNumberMarks = Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
+localStorage.setItem('numberMarks', newNumberMarks);
 console.log(numberMarks, newNumberMarks);
 
 getName(() =>
@@ -225,7 +226,6 @@ getName(() =>
                 const key = domaines[i];
                 if (!currentObject[key])
                     currentObject[key] = [];
-                
                 currentObject[key].push(value);
             }
 
@@ -236,13 +236,13 @@ getName(() =>
             {
                 for (let key in currentObject)
                     if (currentObject[key].length != lastObject[key].length)
-                        for (let i = 2; i < 4; i++)
+                        for (let i = lastObject[key].length; i < currentObject[key].length; i++)
                             if (!Utils.isEmpty(currentObject[key][i]))
                                 differenceObject.push({"domaine": key, "note": currentObject[key][i]});
                 
                 const header = document.querySelector('.header');
                 const headerInfo = document.createElement('div');
-                headerInfo.classList.add('header-action');
+                headerInfo.classList.add('header-action', 'fade-in');
             
                 const alert = document.createElement('div');
                 alert.id = 'alertMark';
@@ -261,7 +261,6 @@ getName(() =>
         };
     });
 });
-localStorage.setItem('numberMarks', newNumberMarks);
 
 // Action after click
 createButton();
