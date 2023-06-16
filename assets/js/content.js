@@ -224,13 +224,14 @@ getName(() =>
             {
                 const value = notes[i];
                 const key = domaines[i];
-                if (!currentObject[key])
+                if (Utils.isEmpty(currentObject[key]))
                     currentObject[key] = [];
-                currentObject[key].push(value);
+                
+                if (!Utils.isEmpty(value) && !Number.isNaN(value))
+                    currentObject[key].push(value);
             }
 
             const lastObject = Utils.isEmpty(localStorage.getItem('marks')) ? currentObject : JSON.parse(localStorage.getItem('marks'));
-            localStorage.setItem('marks', JSON.stringify(currentObject));
 
             if (newNumberMarks != numberMarks)
             {
@@ -258,6 +259,7 @@ getName(() =>
                 headerInfo.append(alert);
                 header.append(headerInfo);
             }
+            localStorage.setItem('marks', JSON.stringify(currentObject));
         };
     });
 });
