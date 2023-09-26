@@ -184,86 +184,6 @@ var styleElement = document.createElement('link');
 styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
 document.head.appendChild(styleElement);
 
-
-// Marks alert
-const numberMarks = Utils.isEmpty(localStorage.getItem('numberMarks')) ? Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length) : Number.parseInt(localStorage.getItem('numberMarks'));
-const newNumberMarks = Number.parseInt(document.querySelectorAll("#mainContent > div > div:nth-child(5) > div > div > table > tbody > tr").length);
-localStorage.setItem('numberMarks', newNumberMarks);
-console.log(numberMarks, newNumberMarks);
-
-getName(() =>
-{
-    request_note((doc) => 
-    {
-        if (!Utils.isEmpty(doc))
-        {
-            // const currentObject = {
-            //     "Bonification S2": [null],
-            //     "R2.01": [14, 13.5],
-            //     "R2.02": [11],
-            //     "R2.03": [15.04, 14.5],
-            //     "R2.04": [15, 17],
-            //     "R2.05": [14.91, 13],
-            //     "R2.06": [20, 19],
-            //     "R2.07": [18, 15],
-            //     "R2.08": [14, 16, 18, 20],
-            //     "R2.12-All": [18, 14.5],
-            //     "R2.13": [18.2, 20],
-            //     "R2.14": [12.5, 15.5, 16],
-            //     "STAGE": [17, 13.5]
-            // }
-              
-
-            // create object with domaine and mark
-            let notes = listNote(doc);
-            let domaines = listDomaine(doc);
-            const differenceObject = [];
-            
-            const currentObject = {};
-            for (let i = 0; i < notes.length; i++)
-            {
-                const value = notes[i];
-                const key = domaines[i];
-                if (Utils.isEmpty(currentObject[key]))
-                    currentObject[key] = [];
-                
-                if (!Utils.isEmpty(value) && !Number.isNaN(value))
-                    currentObject[key].push(value);
-            }
-
-            const lastObject = Utils.isEmpty(localStorage.getItem('marks')) ? currentObject : JSON.parse(localStorage.getItem('marks'));
-
-            if (newNumberMarks != numberMarks)
-            {
-                for (let key in currentObject)
-                    if (currentObject[key].length != lastObject[key].length)
-                        for (let i = lastObject[key].length; i < currentObject[key].length; i++)
-                            if (!Utils.isEmpty(currentObject[key][i]))
-                                differenceObject.push({"domaine": key, "note": currentObject[key][i]});
-                
-                const header = document.querySelector('.header');
-                const headerInfo = document.createElement('div');
-                headerInfo.classList.add('header-action', 'fade-in');
-            
-                const alert = document.createElement('div');
-                alert.id = 'alertMark';
-                alert.classList.add('alert', 'alert-info');
-                alert.innerHTML = 
-                    `<div>
-                        <strong class='fw-semibold'> Vous avez ${differenceObject.length} nouvelle(s) note(s) ! <strong/><br>
-                    </div>`;
-
-                for (let element of differenceObject)
-                    alert.innerHTML += `<div><span class='fw-semibold'>${element.domaine}:</span> ${element.note}</div>`
-            
-                headerInfo.append(alert);
-                header.append(headerInfo);
-            }
-            localStorage.setItem('marks', JSON.stringify(currentObject));
-        };
-    });
-});
-
 // Action after click
 createButton();
 const buttonMark = document.getElementById('buttonMark');
@@ -376,8 +296,8 @@ buttonMark.addEventListener('click', (e) => {
             };
 
             // Generation du code HTML
-            const content = document.querySelector('#mainContent .row');
-            const firstChild = document.querySelector("#mainContent > div > div.col-sm-12:first-child");
+            const content = document.querySelector('#mainContent>div:first-child');
+            const firstChild = document.querySelector("#mainContent > div > div:first-child");
 
             const table = document.createElement('table');
             table.classList.add('table', 'table-border', 'table-striped');
@@ -421,14 +341,20 @@ buttonMark.addEventListener('click', (e) => {
 
             const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
 
-            const colLeft = document.createElement('div');;
+            const colLeft = document.createElement('div');
             colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
             colLeft.append(isAcceptedHtml, tableMarkHtml);
 
-            content.insertBefore(colLeft, firstChild);
-            content.insertBefore(divChartHtml, firstChild);
+            const mainRow = document.createElement('div');
+            mainRow.classList.add('row');
+            mainRow.append(colLeft, divChartHtml);
 
-            if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
+            content.insertBefore(mainRow, firstChild);
+
+
+            if (Utils.isEmpty(moyennes)) {
+                alert('Aucune note n\'a été saisie');
+            } else if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
                 loader.style.display = 'none';
                 e.target.classList.add('disabled');
                 document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
