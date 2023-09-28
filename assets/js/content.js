@@ -1,112 +1,3 @@
-const Utils =
-{
-    sumArray: function (arr) {
-        return arr.reduce((a, b) => a + b, 0);
-    },
-
-    checkPair: function (nbr) {
-        return nbr % 2 == 0;
-    },
-
-    roundValue: function (nbr, power) {
-        return Number.parseInt(nbr) && Number.parseFloat(nbr) ? Math.round((nbr) * Math.pow(10, power)) / Math.pow(10, power) : nbr;
-    },
-
-    deleteArrayValue: function (arr, value) {
-        return arr.filter(x => x !== value);
-    },
-    isEmpty(...values) {
-        if (values.length === 0)
-            return true;
-        for (let index = 0; index < values.length; index++) {
-            const value = values[index];
-            const isArray = Array.isArray(value);
-            let bool = (undefined === value || null === value || (isArray && value.length === 0) || (typeof value === 'string' && value.length === 0));
-            if (bool)
-                return true;
-        }
-        return false;
-    },
-    boolToValue(bool) {
-        return bool ? 'OUI' : 'NON';
-    }
-}
-
-function getName(onResponse = undefined) {
-    var requestOptions =
-    {
-        method: 'GET',
-        redirect: 'follow'
-    };
-
-    fetch("https://iut-rcc-intranet.univ-reims.fr/fr/utilisateur/mon-profil", requestOptions)
-        .then(response => response.text())
-        .then(function (html) {
-            // Callback response
-            const matches = html.matchAll(/mailto:([\w.-]+)@/gm);
-            for (const match of matches)
-                onResponse(match[1]);
-        })
-        .catch(function (err) {
-            // There was an error
-            console.warn('Something went wrong.', err);
-        });
-}
-
-var userName;
-getName((res) => {
-    userName = res;
-});
-
-function request_note(onResponse = undefined) {
-    var requestOptions =
-    {
-        method: 'GET',
-        redirect: 'follow'
-    };
-
-    fetch(`https://iut-rcc-intranet.univ-reims.fr/fr/etudiant/profil/${userName}/notes`, requestOptions)
-        .then(response => response.text())
-        .then(function (html) {
-            // Convert the HTML string into a document object
-            var parser = new DOMParser();
-            var document = parser.parseFromString(html, 'text/html');
-
-            // Callback response
-            onResponse(document);
-        })
-        .catch(function (err) {
-            // There was an error
-            console.warn('Something went wrong.', err);
-        });
-}
-
-function listNote(document) {
-    var noteArray = [];
-    const notes = document.querySelectorAll('table.table.table-border.table-striped .badge');
-    for (note of notes) {
-        var noteParse = Number.parseFloat(note.textContent.replace(',', '.'));
-        noteArray.push(noteParse);
-    }
-    return noteArray;
-}
-
-function listCoef(document) {
-    var coefArray = [];
-    const coefs = document.querySelectorAll("table > tbody > tr > td:nth-child(6)");
-    for (coef of coefs)
-        coefArray.push(Number.parseFloat(coef.textContent));
-    return coefArray;
-}
-
-function listDomaine(document) {
-    var domArray = [];
-    const doms = document.querySelectorAll("table > tbody > tr > td:nth-child(1)");
-    for (dom of doms)
-        domArray.push(dom.textContent);
-    return domArray;
-}
-
 function createButton() {
     const headerInfo = document.querySelector('.header-info');
     const right = document.createElement('div');
@@ -179,6 +70,87 @@ function createChart(data, type, xaxiscategories) {
     return chart.render();
 }
 
+function getAverage() {
+    const listNote = document.querySelectorAll("#mainContent > div.row > div:nth-child(5) > div > div > table > tbody tr");
+    const listModal = document.querySelectorAll("#mainContent > div.row > div:nth-child(6) > div > div > table > tbody tr");
+
+    const notesData = {}
+    for (const elt of listNote) {
+        let nameMoy = elt.children[0].textContent.trim();
+        let note = Number.parseFloat(elt.children[4].children[0].textContent);
+        let coef = Number.parseFloat(elt.children[5].textContent);
+
+        if (!notesData[nameMoy]) {
+            notesData[nameMoy] = [];
+        };
+
+        notesData[nameMoy].push({ note: note, coef: coef });
+    };
+
+
+    const coursesData = {};
+    listModal.forEach(elt => {
+        let name = elt.children[0].textContent.split('|')[0].trim();
+        for (const ue of elt.children[1].children) {
+            let nameUe = ue.textContent.split('(')[0].trim();
+            let coefUe = ue.textContent.match(/\((.*?)\)/)[1];
+
+            if (!coursesData[name]) {
+                coursesData[name] = [];
+            };
+            coursesData[name].push({
+                nameUe: nameUe,
+                coefUe: Number.parseFloat(coefUe)
+            });
+        };
+    });
+    // Créez un objet pour stocker les résultats par UE
+    const resultDataByUE = {};
+
+    // Parcourez les clés du deuxième objet (notesData)
+    for (const courseId in notesData) {
+        // Vérifiez si le cours existe dans le premier objet (coursesData)
+        if (coursesData.hasOwnProperty(courseId)) {
+            // Obtenez les données du cours du premier objet
+            const courseInfo = coursesData[courseId];
+
+            // Obtenez les données de notes du deuxième objet
+            const noteInfo = notesData[courseId][0]; // Nous supposons qu'il y a une seule entrée dans la liste des notes
+
+            // Parcourez les cours du premier objet pour regrouper par UE
+            courseInfo.forEach(course => {
+                const ueName = course.nameUe;
+                const ueCoefficient = course.coefUe;
+
+                // Vérifiez si l'UE existe dans le résultat par UE
+                if (!resultDataByUE.hasOwnProperty(ueName)) {
+                    // Si elle n'existe pas, initialisez-la avec un objet vide
+                    resultDataByUE[ueName] = {
+                        totalNote: 0,
+                        totalCoefficient: 0
+                    };
+                }
+
+                // Ajoutez la note pondérée et le coefficient de ce cours à l'UE correspondante
+                resultDataByUE[ueName].totalNote += noteInfo.note * ueCoefficient;
+                resultDataByUE[ueName].totalCoefficient += ueCoefficient;
+            });
+        }
+    }
+
+    // Maintenant, calculez la moyenne pour chaque UE
+    const averageDataByUE = {};
+
+    for (const ueName in resultDataByUE) {
+        const ueData = resultDataByUE[ueName];
+        const average = ueData.totalNote / ueData.totalCoefficient;
+        if (!Number.isNaN(average)) {
+            averageDataByUE[ueName] = average;
+        };
+    }
+    return averageDataByUE;
+}
+
 // Add header
 var styleElement = document.createElement('link');
 styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
@@ -191,183 +163,87 @@ buttonMark.addEventListener('click', (e) => {
     const loader = document.getElementById('loader');
     loader.style.display = 'flex';
 
-    request_note((doc) => {
-        let notes = listNote(doc);
-        let coefficients = listCoef(doc);
-        let domaines = listDomaine(doc);
-
-        // Initialiser un objet pour stocker les notes et les coefficients par domaine
-        const domainesData = {};
-        for (const domaine of domaines)
-            domainesData[domaine] = [];
-
-        // Ajouter les notes et les coefficients pour chaque domaine dans l'objet
-        for (let i = 0; i < domaines.length; i++) {
-            const domaine = domaines[i];
-            const coefficient = coefficients[i];
-            const note = notes[i];
-            domainesData[domaine].push({ coefficient, note });
-        }
-
-        // Calculer les moyennes par domaine en prenant en compte les coefficients
-        const moyennes = {};
-        for (const [domaine, data] of Object.entries(domainesData)) {
-            let totalNote = 0;
-            let totalCoef = 0;
-            for (const { coefficient, note } of data) {
-                totalNote += coefficient * note;
-                totalCoef += coefficient;
-            }
-            const moyenne = totalNote / totalCoef;
-            moyennes[domaine] = moyenne;
-        }
-
-        const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
-        if (!Utils.isEmpty(title) && title.textContent === "Modalités de Contrôle des Connaissances") {
-            const ueContent = document.querySelector("#mainContent > div > div:nth-child(6) > div");
-
-            // Sélectionne toutes les balises span contenant les étiquettes
-            const etiquettes = ueContent.querySelectorAll('span[class^="badge bg-c"]');
-
-            // Initialise un objet pour stocker les matières regroupées par étiquettes
-            const matieresParEtiquettes = {};
-
-            // Parcourt toutes les balises span contenant les étiquettes
-            etiquettes.forEach(etiquette => {
-                // Récupère le nom de l'étiquette
-                const nomEtiquette = etiquette.textContent.trim().match(/^.*?(?=\s*\()/gm)[0];
-
-                // Récupère la balise td parente de l'étiquette
-                const tdParent = etiquette.closest('td');
-
-                // Récupère le nom de la matière contenue dans la balise td parente
-                const nomMatiere = tdParent.previousElementSibling.textContent.trim();
-
-                // Récupère le coefficient de la matière contenue dans la balise td parente
-                const coefficient = tdParent.textContent.match(/\((.*?)\)/gm)[0].split('(')[1].split(')')[0];
-
-                // Si l'étiquette n'a jamais été rencontrée, ajoute une nouvelle propriété à l'objet
-                if (!matieresParEtiquettes[nomEtiquette])
-                    matieresParEtiquettes[nomEtiquette] = [];
-
-                // Ajoute la matière à la liste des matières associées à l'étiquette
-                matieresParEtiquettes[nomEtiquette].push({ nom: nomMatiere, coefficient: coefficient });
-            });
-
-            const linkedData = {};
-            // Lier les données
-            for (const category in matieresParEtiquettes) {
-                const courses = matieresParEtiquettes[category];
-                for (const course of courses) {
-                    const coefficient = course.coefficient;
-                    const courseCode = course.nom.split(" | ")[0]; // Extraire le code du cours
-                    if (moyennes[courseCode]) {
-                        if (Utils.isEmpty(linkedData[category]))
-                            linkedData[category] = [];
-
-                        linkedData[category].push(
-                            {
-                                "nom": course.nom,
-                                "coefficient": coefficient,
-                                "valeur": moyennes[courseCode]
-                            });
-                    };
-                };
+    const averageDataByUE = getAverage(); console.log(averageDataByUE);
+    const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
+    if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
+        let isAccepted = true;
+        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
+            if (Number.parseFloat(etiquette) < 10) {
+                isAccepted = false;
             };
-
-            // Calculer la moyenne des notes pour chaque étiquette
-            for (const category in linkedData) {
-                const courses = linkedData[category];
-                let sum = 0;
-                let coef = 0;
-                for (const course of courses) {
-                    sum += (parseFloat(course.valeur) * parseFloat(course.coefficient));
-                    coef += parseFloat(course.coefficient);
-                }
-                const average = sum / coef;
-                linkedData[category].push({ "moyenne": Utils.roundValue(average, 2) });
-            }
-
-            console.log(linkedData);
-            let isAccepted = true;
-            for (const [domaine, etiquette] of Object.entries(linkedData)) {
-                if (Number.parseFloat(etiquette[etiquette.length - 1].moyenne) < 10)
-                    isAccepted = false;
-            };
-
-            // Generation du code HTML
-            const content = document.querySelector('#mainContent>div:first-child');
-            const firstChild = document.querySelector("#mainContent > div > div:first-child");
-
-            const table = document.createElement('table');
-            table.classList.add('table', 'table-border', 'table-striped');
-
-            const thead = document.createElement('thead');
-            const trHead = document.createElement('tr');
-
-            for (const [domaine] of Object.entries(linkedData)) {
-                const th = document.createElement('th');
-                th.classList.add('text-center');
-                th.innerHTML = domaine;
-                trHead.append(th);
-            };
-            thead.append(trHead);
-
-            const tbody = document.createElement('tbody');
-            const trBody = document.createElement('tr');
-            for (const [domaine, etiquette] of Object.entries(linkedData)) {
-                const td = document.createElement('td');
-                td.classList.add('text-center');
-                td.innerHTML = `<span class="fs-11 badge ${parseFloat(etiquette[etiquette.length - 1].moyenne) < 10 ? "bg-danger" : parseFloat(etiquette[etiquette.length - 1].moyenne) <= 12 ? "bg-warning" : "bg-success"}">${parseFloat(etiquette[etiquette.length - 1].moyenne)}</span>`;
-                trBody.append(td);
-            };
-            tbody.append(trBody);
-            table.append(thead, tbody);
-
-            const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
-
-            // ==== IS ACCEPTED ====
-            const olIsAccepted = document.createElement('ol')
-            olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
-            const liIsAccepted = document.createElement('li');
-            liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
-            liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
-            olIsAccepted.append(liIsAccepted);
-            const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
-
-            // ==== CHART ====
-            const divChart = document.createElement('div')
-            divChart.id = "chart";
-
-            const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
-
-            const colLeft = document.createElement('div');
-            colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
-            colLeft.append(isAcceptedHtml, tableMarkHtml);
-
-            const mainRow = document.createElement('div');
-            mainRow.classList.add('row');
-            mainRow.append(colLeft, divChartHtml);
-
-            content.insertBefore(mainRow, firstChild);
-
-
-            if (Utils.isEmpty(moyennes)) {
-                alert('Aucune note n\'a été saisie');
-            } else if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
-                loader.style.display = 'none';
-                e.target.classList.add('disabled');
-                document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
-            };
-
-            var dataMarks = [];
-            var dataDomain = [];
-            for (const [domaine, etiquette] of Object.entries(linkedData)) {
-                dataMarks.push(etiquette[etiquette.length - 1].moyenne);
-                dataDomain.push(domaine);
-            };
-
-            createChart(dataMarks, 'bar', dataDomain);
         };
-    });
+
+        // Generation du code HTML
+        const content = document.querySelector('#mainContent>div:first-child');
+        const firstChild = document.querySelector("#mainContent > div > div:first-child");
+
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-border', 'table-striped');
+
+        const thead = document.createElement('thead');
+        const trHead = document.createElement('tr');
+
+        for (const [domaine] of Object.entries(averageDataByUE)) {
+            const th = document.createElement('th');
+            th.classList.add('text-center');
+            th.innerHTML = domaine;
+            trHead.append(th);
+        };
+        thead.append(trHead);
+
+        const tbody = document.createElement('tbody');
+        const trBody = document.createElement('tr');
+        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
+            const td = document.createElement('td');
+            td.classList.add('text-center');
+            td.innerHTML = `<span class="fs-11 badge ${parseFloat(etiquette) < 10 ? "bg-danger" : parseFloat(etiquette) <= 12 ? "bg-warning" : "bg-success"}">${parseFloat(etiquette)}</span>`;
+            trBody.append(td);
+        };
+        tbody.append(trBody);
+        table.append(thead, tbody);
+
+        const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
+
+        // ==== IS ACCEPTED ====
+        const olIsAccepted = document.createElement('ol')
+        olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
+        const liIsAccepted = document.createElement('li');
+        liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
+        liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
+        olIsAccepted.append(liIsAccepted);
+        const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
+
+        // ==== CHART ====
+        const divChart = document.createElement('div')
+        divChart.id = "chart";
+
+        const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
+
+        const colLeft = document.createElement('div');
+        colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
+        colLeft.append(isAcceptedHtml, tableMarkHtml);
+
+        const mainRow = document.createElement('div');
+        mainRow.classList.add('row');
+        mainRow.append(colLeft, divChartHtml);
+
+        content.insertBefore(mainRow, firstChild);
+
+        if (Utils.isEmpty(Object.values(averageDataByUE))) {
+            alert('Aucune note n\'a été saisie');
+        } else if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
+            loader.style.display = 'none';
+            e.target.classList.add('disabled');
+            document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
+        };
+
+        var dataMarks = [];
+        var dataDomain = [];
+        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
+            dataMarks.push(etiquette);
+            dataDomain.push(domaine);
+        };
+
+        createChart(dataMarks, 'bar', dataDomain);
+    };
 });
