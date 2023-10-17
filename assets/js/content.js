@@ -23,6 +23,7 @@ function createCardBody(content, title, colLength = 6) {
 
     const card_body = document.createElement('div');
     card_body.classList.add('card-body');
+    card_body.style.overflow = 'auto';
     card.append(header, card_body);
 
     if (content instanceof HTMLElement)
@@ -167,8 +168,8 @@ buttonMark.addEventListener('click', (e) => {
     const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
     if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
         let isAccepted = true;
-        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
-            if (Number.parseFloat(etiquette) < 10) {
+        for (const [domaine, note] of Object.entries(averageDataByUE)) {
+            if (Number.parseFloat(note) < 10) {
                 isAccepted = false;
             };
         };
@@ -193,10 +194,10 @@ buttonMark.addEventListener('click', (e) => {
 
         const tbody = document.createElement('tbody');
         const trBody = document.createElement('tr');
-        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
+        for (const [domaine, note] of Object.entries(averageDataByUE)) {
             const td = document.createElement('td');
             td.classList.add('text-center');
-            td.innerHTML = `<span class="fs-11 badge ${parseFloat(etiquette) < 10 ? "bg-danger" : parseFloat(etiquette) <= 12 ? "bg-warning" : "bg-success"}">${parseFloat(etiquette)}</span>`;
+            td.innerHTML = `<span class="fs-11 badge ${parseFloat(note) < 10 ? "bg-danger" : parseFloat(note) <= 12 ? "bg-warning" : "bg-success"}">${Utils.roundValue(note, 2)}</span>`;
             trBody.append(td);
         };
         tbody.append(trBody);
@@ -239,8 +240,8 @@ buttonMark.addEventListener('click', (e) => {
 
         var dataMarks = [];
         var dataDomain = [];
-        for (const [domaine, etiquette] of Object.entries(averageDataByUE)) {
-            dataMarks.push(etiquette);
+        for (const [domaine, note] of Object.entries(averageDataByUE)) {
+            dataMarks.push(Utils.roundValue(note, 2));
             dataDomain.push(domaine);
         };
 

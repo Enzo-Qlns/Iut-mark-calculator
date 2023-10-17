@@ -7,8 +7,13 @@ const Utils = {
         return nbr % 2 == 0;
     },
 
-    roundValue: function (nbr, power) {
-        return Number.parseInt(nbr) && Number.parseFloat(nbr) ? Math.round((nbr) * Math.pow(10, power)) / Math.pow(10, power) : nbr;
+    roundValue: function (nombre, chiffresApresVirgule) {
+        if (isNaN(nombre) || isNaN(chiffresApresVirgule)) {
+            return "Veuillez entrer des valeurs numériques valides.";
+        }
+        const factor = Math.pow(10, chiffresApresVirgule);
+        const nombreArrondi = Math.round(nombre * factor) / factor;
+        return Number.parseFloat(nombreArrondi);
     },
 
     deleteArrayValue: function (arr, value) {
