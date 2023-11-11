@@ -45,12 +45,12 @@ function createChart(data, type, xaxiscategories) {
         },
         colors: [
             function ({ value }) {
-                if (value >= 12)
-                    return "#15c377";
-                else if (value === 10)
+		if (value < 10)
+		    return "#f96868"
+                else if (value <= 12)
                     return "#faa64b";
                 else
-                    return "#f96868";
+                    return "#15c377";
             }
         ],
         plotOptions: {
