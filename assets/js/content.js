@@ -1,3 +1,6 @@
+/**
+ * Fonction pour créer un bouton
+ */
 function createButton() {
     const headerInfo = document.querySelector('.header-info');
     const right = document.createElement('div');
@@ -8,6 +11,13 @@ function createButton() {
     headerInfo.append(right);
 }
 
+/**
+ * Fonction pour créer un carte
+ * @param {String} content 
+ * @param {String} title 
+ * @param {Number} colLength 
+ * @returns 
+ */
 function createCardBody(content, title, colLength = 6) {
     const col = document.createElement('div');
     col.classList.add('col-sm-12', 'col-md-' + colLength, 'fade-in');
@@ -34,6 +44,13 @@ function createCardBody(content, title, colLength = 6) {
     return col;
 }
 
+/**
+ * Fonction pour créer un graphique
+ * @param {String} data 
+ * @param {String} type 
+ * @param {String} xaxiscategories 
+ * @returns 
+ */
 function createChart(data, type, xaxiscategories) {
     var options = {
         series: [{
@@ -71,6 +88,9 @@ function createChart(data, type, xaxiscategories) {
     return chart.render();
 }
 
+/**
+ * Fonction qui calcule la moyenne
+ */
 function getAverage() {
     const listNote = document.querySelectorAll("#mainContent > div.row > div:nth-child(5) > div > div > table > tbody tr");
     const listModal = document.querySelectorAll("#mainContent > div.row > div:nth-child(6) > div > div > table > tbody tr");
