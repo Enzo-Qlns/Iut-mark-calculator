@@ -53,7 +53,7 @@ function createCardBody(content, title, colLength = 6) {
  * @returns 
  */
 function createChart(data, type, xaxiscategories) {
-    let options = {
+    const options = {
         series: [{
             data: data
         }],
@@ -85,7 +85,7 @@ function createChart(data, type, xaxiscategories) {
         },
     };
 
-    let chart = new ApexCharts(document.querySelector("#chart"), options);
+    const chart = new ApexCharts(document.querySelector("#chart"), options);
     return chart.render();
 }
 
