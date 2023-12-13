@@ -1,14 +1,15 @@
 /**
  * Fonction pour créer un bouton
  */
-function createButton() {
+function createButton(text) {
     const headerInfo = document.querySelector('.header-info');
     const right = document.createElement('div');
-    const text = "Afficher vos moyennes";
     right.classList.add('right');
     right.innerHTML = `<div class="card-header-actions"><a class="btn btn-sm btn-success" id="buttonMark" data-bs-placement="bottom"><i class="fa-solid fa-eye"></i> ${text}</a></div>`;
     right.style.display = 'flex';
     headerInfo.append(right);
+
+    return right;
 }
 
 /**
@@ -52,7 +53,7 @@ function createCardBody(content, title, colLength = 6) {
  * @returns 
  */
 function createChart(data, type, xaxiscategories) {
-    var options = {
+    let options = {
         series: [{
             data: data
         }],
@@ -62,8 +63,8 @@ function createChart(data, type, xaxiscategories) {
         },
         colors: [
             function ({ value }) {
-		if (value < 10)
-		    return "#f96868"
+                if (value < 10)
+                    return "#f96868"
                 else if (value <= 12)
                     return "#faa64b";
                 else
@@ -84,7 +85,7 @@ function createChart(data, type, xaxiscategories) {
         },
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    let chart = new ApexCharts(document.querySelector("#chart"), options);
     return chart.render();
 }
 
@@ -172,99 +173,104 @@ function getAverage() {
     return averageDataByUE;
 }
 
-// Add header
-var styleElement = document.createElement('link');
-styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
-document.head.appendChild(styleElement);
-
-// Action after click
-createButton();
-const buttonMark = document.getElementById('buttonMark');
-buttonMark.addEventListener('click', (e) => {
-    const loader = document.getElementById('loader');
-    loader.style.display = 'flex';
-
-    const averageDataByUE = getAverage(); console.log(averageDataByUE);
-    const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
-    if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
-        let isAccepted = true;
-        for (const [domaine, note] of Object.entries(averageDataByUE)) {
-            if (Number.parseFloat(note) < 10) {
-                isAccepted = false;
-            };
+function generateHtml(averageDataByUE) {
+    let isAccepted = true;
+    for (const [domaine, note] of Object.entries(averageDataByUE)) {
+        if (Number.parseFloat(note) < 10) {
+            isAccepted = false;
         };
-
-        // Generation du code HTML
-        const content = document.querySelector('#mainContent>div:first-child');
-        const firstChild = document.querySelector("#mainContent > div > div:first-child");
-
-        const table = document.createElement('table');
-        table.classList.add('table', 'table-border', 'table-striped');
-
-        const thead = document.createElement('thead');
-        const trHead = document.createElement('tr');
-
-        for (const [domaine] of Object.entries(averageDataByUE)) {
-            const th = document.createElement('th');
-            th.classList.add('text-center');
-            th.innerHTML = domaine;
-            trHead.append(th);
-        };
-        thead.append(trHead);
-
-        const tbody = document.createElement('tbody');
-        const trBody = document.createElement('tr');
-        for (const [domaine, note] of Object.entries(averageDataByUE)) {
-            const td = document.createElement('td');
-            td.classList.add('text-center');
-            td.innerHTML = `<span class="fs-11 badge ${parseFloat(note) < 10 ? "bg-danger" : parseFloat(note) <= 12 ? "bg-warning" : "bg-success"}">${Utils.roundValue(note, 2)}</span>`;
-            trBody.append(td);
-        };
-        tbody.append(trBody);
-        table.append(thead, tbody);
-
-        const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
-
-        // ==== IS ACCEPTED ====
-        const olIsAccepted = document.createElement('ol')
-        olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
-        const liIsAccepted = document.createElement('li');
-        liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
-        liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
-        olIsAccepted.append(liIsAccepted);
-        const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
-
-        // ==== CHART ====
-        const divChart = document.createElement('div')
-        divChart.id = "chart";
-
-        const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
-
-        const colLeft = document.createElement('div');
-        colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
-        colLeft.append(isAcceptedHtml, tableMarkHtml);
-
-        const mainRow = document.createElement('div');
-        mainRow.classList.add('row');
-        mainRow.append(colLeft, divChartHtml);
-
-        content.insertBefore(mainRow, firstChild);
-
-        if (Utils.isEmpty(Object.values(averageDataByUE))) {
-            alert('Aucune note n\'a été saisie');
-        } else if (!Utils.isEmpty(colLeft.innerHTML) && !Utils.isEmpty(divChartHtml.innerHTML)) {
-            loader.style.display = 'none';
-            e.target.classList.add('disabled');
-            document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
-        };
-
-        var dataMarks = [];
-        var dataDomain = [];
-        for (const [domaine, note] of Object.entries(averageDataByUE)) {
-            dataMarks.push(Utils.roundValue(note, 2));
-            dataDomain.push(domaine);
-        };
-
-        createChart(dataMarks, 'bar', dataDomain);
     };
-});
+
+    // Generation du code HTML
+    const content = document.querySelector('#mainContent>div:first-child');
+    const firstChild = document.querySelector("#mainContent > div > div:first-child");
+
+    // ==== TABLE MARK ====
+    const table = document.createElement('table');
+    table.classList.add('table', 'table-border', 'table-striped');
+
+    const thead = document.createElement('thead');
+    const trHead = document.createElement('tr');
+
+    for (const [domaine] of Object.entries(averageDataByUE)) {
+        const th = document.createElement('th');
+        th.classList.add('text-center');
+        th.innerHTML = domaine;
+        trHead.append(th);
+    };
+    thead.append(trHead);
+
+    const tbody = document.createElement('tbody');
+    const trBody = document.createElement('tr');
+    for (const [domaine, note] of Object.entries(averageDataByUE)) {
+        const td = document.createElement('td');
+        td.classList.add('text-center');
+        td.innerHTML = `<span class="fs-11 badge ${parseFloat(note) < 10 ? "bg-danger" : parseFloat(note) <= 12 ? "bg-warning" : "bg-success"}">${Utils.roundValue(note, 2)}</span>`;
+        trBody.append(td);
+    };
+    tbody.append(trBody);
+    table.append(thead, tbody);
+
+    const tableMarkHtml = createCardBody(table, 'Vos moyennes', 12);
+
+    // ==== IS ACCEPTED ====
+    const olIsAccepted = document.createElement('ol')
+    olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
+    const liIsAccepted = document.createElement('li');
+    liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
+    liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
+    olIsAccepted.append(liIsAccepted);
+    const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
+
+    // ==== CHART ====
+    const divChart = document.createElement('div')
+    divChart.id = "chart";
+
+    const divChartHtml = createCardBody(divChart, 'Aperçu de vos moyennes', 6);
+
+    const colLeft = document.createElement('div');
+    colLeft.classList.add('col-sm-12', 'col-md-6', 'fade-in"');
+    colLeft.append(isAcceptedHtml, tableMarkHtml);
+
+    const mainRow = document.createElement('div');
+    mainRow.classList.add('row');
+    mainRow.append(colLeft, divChartHtml);
+
+    content.insertBefore(mainRow, firstChild);
+
+    let dataMarks = [];
+    let dataDomain = [];
+    for (const [domaine, note] of Object.entries(averageDataByUE)) {
+        dataMarks.push(Utils.roundValue(note, 2));
+        dataDomain.push(domaine);
+    };
+
+    createChart(dataMarks, 'bar', dataDomain);
+}
+
+function toastPaypal() {
+    Swal.fire({
+        title: "<span style='font-weight: bold; font-size: 40px !important;'>Besoin de vous !</span>",
+        text: "Cher utilisateur, pour continuer à améliorer et maintenir notre extension, nous avons besoin de votre soutien. Considérez faire un don pour nous aider à fournir une expérience optimale. Merci pour votre contribution.",
+        confirmButtonText: "Faire un don",
+        showClass: {
+            popup: `
+                animate__animated
+                animate__fadeInUp
+                animate__faster
+              `
+        },
+        hideClass: {
+            popup: `
+                animate__animated
+                animate__fadeOutDown
+                animate__faster
+              `
+        },
+        width: 600,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.open('https://www.paypal.com/donate/?hosted_button_id=UM5G4CD7PTJQJ', '_blank');
+        };
+    });
+}
