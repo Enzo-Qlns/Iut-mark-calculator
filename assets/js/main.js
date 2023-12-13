@@ -3,10 +3,6 @@ const styleElement = document.createElement('link');
 styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
 document.head.appendChild(styleElement);
 
-const scriptElement = document.createElement('link');
-styleElement.script = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
-document.head.appendChild(styleElement);
-
 // Action after click
 let isClicked = false;
 const buttonMark = createButton("Afficher vos moyennes");
