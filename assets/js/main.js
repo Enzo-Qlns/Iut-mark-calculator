@@ -1,9 +1,9 @@
 // Add header
-let styleElement = document.createElement('link');
+const styleElement = document.createElement('link');
 styleElement.href = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
 document.head.appendChild(styleElement);
 
-let scriptElement = document.createElement('link');
+const scriptElement = document.createElement('link');
 styleElement.script = 'https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.css';
 document.head.appendChild(styleElement);
 
@@ -11,13 +11,12 @@ document.head.appendChild(styleElement);
 let isClicked = false;
 const buttonMark = createButton("Afficher vos moyennes");
 buttonMark.addEventListener('click', (event) => {
-    toastPaypal();
     isClicked = true;
     const averageDataByUE = getAverage();
     const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
 
     if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
-        generateHtml(averageDataByUE);
+        toastPaypal(() => generateHtml(averageDataByUE));
         console.table(averageDataByUE);
     }
 

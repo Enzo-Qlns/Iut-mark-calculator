@@ -248,9 +248,9 @@ function generateHtml(averageDataByUE) {
     createChart(dataMarks, 'bar', dataDomain);
 }
 
-function toastPaypal() {
+function toastPaypal(onResponse) {
     Swal.fire({
-        title: "<span style='font-weight: bold; font-size: 40px !important;'>Besoin de vous !</span>",
+        title: "<span style='font-weight: bold; font-size: 40px !important;'>Juste une seconde !</span>",
         text: "Cher utilisateur, pour continuer à améliorer et maintenir notre extension, nous avons besoin de votre soutien. Considérez faire un don pour nous aider à fournir une expérience optimale. Merci pour votre contribution.",
         confirmButtonText: "Faire un don",
         showClass: {
@@ -258,19 +258,20 @@ function toastPaypal() {
                 animate__animated
                 animate__fadeInUp
                 animate__faster
-              `
+            `
         },
         hideClass: {
             popup: `
                 animate__animated
                 animate__fadeOutDown
                 animate__faster
-              `
+            `
         },
         width: 600,
     }).then((result) => {
         if (result.isConfirmed) {
             window.open('https://www.paypal.com/donate/?hosted_button_id=UM5G4CD7PTJQJ', '_blank');
         };
+        onResponse();
     });
 }
