@@ -3,12 +3,17 @@
  */
 function createButton(text) {
     const headerInfo = document.querySelector('.header-info');
-    const div = document.createElement('div');
-    div.classList.add('right');
-    div.innerHTML = `<div class="card-header-actions"><a class="btn btn-sm btn-success" id="buttonMark" data-bs-placement="bottom"><i class="fa-solid fa-eye"></i> ${text}</a></div>`;
-    div.style.display = 'flex';
-    headerInfo.append(div);
-    return div;
+    const card_header = document.createElement('div');
+    card_header.classList.add('right', 'card-header-actions');
+    card_header.style.display = 'flex';
+    
+    const a = document.createElement('a');
+    a.classList.add('btn', 'btn-sm', 'btn-success');
+    a.innerHTML = `<i class="fa-solid fa-eye"></i>${text}`
+
+    card_header.append(a);
+    headerInfo.append(card_header);
+    return a;
 }
 
 /**

@@ -20,6 +20,6 @@ buttonMark.addEventListener('click', (event) => {
         alert('Aucune note n\'a été saisie');
     } else if (isClicked) {
         event.target.classList.add('disabled');
-        document.querySelector('#buttonMark>i').classList.replace("fa-eye", "fa-eye-slash");
+        buttonMark.querySelector('i').classList.replace("fa-eye", "fa-eye-slash");
     };
 });
