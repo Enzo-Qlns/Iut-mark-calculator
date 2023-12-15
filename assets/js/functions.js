@@ -6,10 +6,10 @@ function createButton(text) {
     const card_header = document.createElement('div');
     card_header.classList.add('right', 'card-header-actions');
     card_header.style.display = 'flex';
-    
+
     const a = document.createElement('a');
     a.classList.add('btn', 'btn-sm', 'btn-success');
-    a.innerHTML = `<i class="fa-solid fa-eye"></i>${text}`
+    a.innerHTML = `<i class="fa-solid fa-eye"></i> ${text}`
 
     card_header.append(a);
     headerInfo.append(card_header);
@@ -258,6 +258,8 @@ function toastPaypal(callBack) {
         title: "<span style='font-weight: bold; font-size: 40px !important;'>Juste une seconde !</span>",
         text: "Cher utilisateur, pour continuer à améliorer et maintenir notre extension, nous avons besoin de votre soutien. Considérez faire un don pour nous aider à fournir une expérience optimale. Merci pour votre contribution.",
         confirmButtonText: "Faire un don",
+        showCloseButton: true,
+        focusConfirm: true,
         showClass: {
             popup: `
                 animate__animated
