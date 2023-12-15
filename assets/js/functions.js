@@ -179,6 +179,8 @@ function getAverage() {
 }
 
 function generateHtml(averageDataByUE) {
+    console.table(averageDataByUE);
+    
     let isAccepted = true;
     for (const [domaine, note] of Object.entries(averageDataByUE)) {
         if (Number.parseFloat(note) < 10) {
@@ -223,7 +225,7 @@ function generateHtml(averageDataByUE) {
     olIsAccepted.className = 'timeline timeline-activity timeline-point-sm timeline-content-right text-left w-100';
     const liIsAccepted = document.createElement('li');
     liIsAccepted.className = 'alert alert-' + (isAccepted ? 'success' : 'danger');
-    liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation: </strong> ' + Utils.boolToValue(isAccepted);
+    liIsAccepted.innerHTML = '<strong class="fw-semibold">Validation : </strong> ' + Utils.boolToValue(isAccepted);
     olIsAccepted.append(liIsAccepted);
     const isAcceptedHtml = createCardBody(olIsAccepted, 'Validation du semestre', 12);
 

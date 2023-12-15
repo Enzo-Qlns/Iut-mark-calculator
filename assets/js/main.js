@@ -13,7 +13,6 @@ buttonMark.addEventListener('click', (event) => {
 
     if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
         toastPaypal(() => generateHtml(averageDataByUE));
-        console.table(averageDataByUE);
     }
 
     if (Utils.isEmpty(Object.values(averageDataByUE))) {
