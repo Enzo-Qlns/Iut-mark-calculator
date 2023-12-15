@@ -3,13 +3,12 @@
  */
 function createButton(text) {
     const headerInfo = document.querySelector('.header-info');
-    const right = document.createElement('div');
-    right.classList.add('right');
-    right.innerHTML = `<div class="card-header-actions"><a class="btn btn-sm btn-success" id="buttonMark" data-bs-placement="bottom"><i class="fa-solid fa-eye"></i> ${text}</a></div>`;
-    right.style.display = 'flex';
-    headerInfo.append(right);
-
-    return right;
+    const div = document.createElement('div');
+    div.classList.add('right');
+    div.innerHTML = `<div class="card-header-actions"><a class="btn btn-sm btn-success" id="buttonMark" data-bs-placement="bottom"><i class="fa-solid fa-eye"></i> ${text}</a></div>`;
+    div.style.display = 'flex';
+    headerInfo.append(div);
+    return div;
 }
 
 /**
@@ -91,6 +90,7 @@ function createChart(data, type, xaxiscategories) {
 
 /**
  * Fonction qui calcule la moyenne
+ * @returns 
  */
 function getAverage() {
     const listNote = document.querySelectorAll("#mainContent > div.row > div:nth-child(5) > div > div > table > tbody tr");
@@ -248,7 +248,7 @@ function generateHtml(averageDataByUE) {
     createChart(dataMarks, 'bar', dataDomain);
 }
 
-function toastPaypal(onResponse) {
+function toastPaypal(callBack) {
     Swal.fire({
         title: "<span style='font-weight: bold; font-size: 40px !important;'>Juste une seconde !</span>",
         text: "Cher utilisateur, pour continuer à améliorer et maintenir notre extension, nous avons besoin de votre soutien. Considérez faire un don pour nous aider à fournir une expérience optimale. Merci pour votre contribution.",
@@ -272,6 +272,6 @@ function toastPaypal(onResponse) {
         if (result.isConfirmed) {
             window.open('https://www.paypal.com/donate/?hosted_button_id=UM5G4CD7PTJQJ', '_blank');
         };
-        onResponse();
+        callBack();
     });
 }
