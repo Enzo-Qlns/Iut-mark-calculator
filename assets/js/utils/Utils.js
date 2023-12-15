@@ -1,4 +1,17 @@
 const Utils = {
+    isEmpty: function(...values) {
+        if (values.length === 0)
+            return true;
+        for (let index = 0; index < values.length; index++) {
+            const value = values[index];
+            const isArray = Array.isArray(value);
+            let bool = (undefined === value || null === value || (isArray && value.length === 0) || (typeof value === 'string' && value.length === 0));
+            if (bool)
+                return true;
+        }
+        return false;
+    },
+    
     sumArray: function (arr) {
         return arr.reduce((a, b) => a + b, 0);
     },
@@ -19,19 +32,8 @@ const Utils = {
     deleteArrayValue: function (arr, value) {
         return arr.filter(x => x !== value);
     },
-    isEmpty(...values) {
-        if (values.length === 0)
-            return true;
-        for (let index = 0; index < values.length; index++) {
-            const value = values[index];
-            const isArray = Array.isArray(value);
-            let bool = (undefined === value || null === value || (isArray && value.length === 0) || (typeof value === 'string' && value.length === 0));
-            if (bool)
-                return true;
-        }
-        return false;
-    },
-    boolToValue(bool) {
+
+    boolToValue: function(bool) {
         return bool ? 'OUI' : 'NON';
     }
 }
