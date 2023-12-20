@@ -139,7 +139,7 @@ function getAverage() {
             const courseInfo = coursesData[courseId];
 
             // Obtenez les données de notes du deuxième objet
-            const noteInfo = calculateAverageWeight(notesData[courseId]);
+            const noteInfo = Utils.calculateAverageWeight(notesData[courseId]);
 
             // Parcourez les cours du premier objet pour regrouper par UE
             courseInfo.forEach(course => {
