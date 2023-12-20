@@ -1,5 +1,5 @@
 const Utils = {
-    isEmpty: function(...values) {
+    isEmpty: function (...values) {
         if (values.length === 0)
             return true;
         for (let index = 0; index < values.length; index++) {
@@ -11,7 +11,7 @@ const Utils = {
         }
         return false;
     },
-    
+
     sumArray: function (arr) {
         return arr.reduce((a, b) => a + b, 0);
     },
@@ -33,7 +33,20 @@ const Utils = {
         return arr.filter(x => x !== value);
     },
 
-    boolToValue: function(bool) {
+    boolToValue: function (bool) {
         return bool ? 'OUI' : 'NON';
+    },
+
+    calculateAverageWeight: function (notes) {
+        let sommeProduits = 0;
+        let sommeCoefficients = 0;
+
+        // Parcourir le tableau de notes
+        notes.forEach(item => {
+            sommeProduits += item.note * item.coef;
+            sommeCoefficients += item.coef;
+        });
+
+        return sommeProduits / sommeCoefficients;
     }
 }

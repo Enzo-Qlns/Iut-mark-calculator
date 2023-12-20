@@ -104,16 +104,14 @@ function getAverage() {
     const notesData = {}
     for (const elt of listNote) {
         let nameMoy = elt.children[0].textContent.trim();
-        let note = Number.parseFloat(elt.children[4].children[0].textContent);
-        let coef = Number.parseFloat(elt.children[5].textContent);
+        let note = Number.parseFloat(elt.children[4].children[0].textContent.replace(',', '.'));
+        let coef = Number.parseFloat(elt.children[5].textContent.replace(',', '.'));
 
         if (!notesData[nameMoy]) {
             notesData[nameMoy] = [];
         };
-
         notesData[nameMoy].push({ note: note, coef: coef });
     };
-
 
     const coursesData = {};
     listModal.forEach(elt => {
@@ -133,7 +131,6 @@ function getAverage() {
     });
     // Créez un objet pour stocker les résultats par UE
     const resultDataByUE = {};
-
     // Parcourez les clés du deuxième objet (notesData)
     for (const courseId in notesData) {
         // Vérifiez si le cours existe dans le premier objet (coursesData)
@@ -142,7 +139,7 @@ function getAverage() {
             const courseInfo = coursesData[courseId];
 
             // Obtenez les données de notes du deuxième objet
-            const noteInfo = notesData[courseId][0]; // Nous supposons qu'il y a une seule entrée dans la liste des notes
+            const noteInfo = calculateAverageWeight(notesData[courseId]);
 
             // Parcourez les cours du premier objet pour regrouper par UE
             courseInfo.forEach(course => {
@@ -159,7 +156,7 @@ function getAverage() {
                 }
 
                 // Ajoutez la note pondérée et le coefficient de ce cours à l'UE correspondante
-                resultDataByUE[ueName].totalNote += noteInfo.note * ueCoefficient;
+                resultDataByUE[ueName].totalNote += noteInfo * ueCoefficient;
                 resultDataByUE[ueName].totalCoefficient += ueCoefficient;
             });
         }
@@ -179,8 +176,8 @@ function getAverage() {
 }
 
 function generateHtml(averageDataByUE) {
-    console.table(averageDataByUE);
-    
+    // console.table(averageDataByUE);
+
     let isAccepted = true;
     for (const [domaine, note] of Object.entries(averageDataByUE)) {
         if (Number.parseFloat(note) < 10) {

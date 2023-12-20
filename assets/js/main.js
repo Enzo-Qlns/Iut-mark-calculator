@@ -12,7 +12,8 @@ buttonMark.addEventListener('click', (event) => {
     const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
 
     if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
-        toastPaypal(() => generateHtml(averageDataByUE));
+        // toastPaypal(() => generateHtml(averageDataByUE));
+        generateHtml(averageDataByUE);
     }
 
     if (Utils.isEmpty(Object.values(averageDataByUE))) {
