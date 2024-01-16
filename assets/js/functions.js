@@ -141,24 +141,27 @@ function getAverage() {
             // Obtenez les données de notes du deuxième objet
             const noteInfo = Utils.calculateAverageWeight(notesData[courseId]);
 
-            // Parcourez les cours du premier objet pour regrouper par UE
-            courseInfo.forEach(course => {
-                const ueName = course.nameUe;
-                const ueCoefficient = course.coefUe;
+            // Regarde si la note est bien un entier (et non une phrase)
+            if (!Number.isNaN(noteInfo)) {
+                // Parcourez les cours du premier objet pour regrouper par UE
+                courseInfo.forEach(course => {
+                    const ueName = course.nameUe;
+                    const ueCoefficient = course.coefUe;
 
-                // Vérifiez si l'UE existe dans le résultat par UE
-                if (!resultDataByUE.hasOwnProperty(ueName)) {
-                    // Si elle n'existe pas, initialisez-la avec un objet vide
-                    resultDataByUE[ueName] = {
-                        totalNote: 0,
-                        totalCoefficient: 0
-                    };
-                }
-
-                // Ajoutez la note pondérée et le coefficient de ce cours à l'UE correspondante
-                resultDataByUE[ueName].totalNote += noteInfo * ueCoefficient;
-                resultDataByUE[ueName].totalCoefficient += ueCoefficient;
-            });
+                    // Vérifiez si l'UE existe dans le résultat par UE
+                    if (!resultDataByUE.hasOwnProperty(ueName)) {
+                        // Si elle n'existe pas, initialisez-la avec un objet vide
+                        resultDataByUE[ueName] = {
+                            totalNote: 0,
+                            totalCoefficient: 0
+                        };
+                    }
+                    
+                    // Ajoutez la note pondérée et le coefficient de ce cours à l'UE correspondante
+                    resultDataByUE[ueName].totalNote += noteInfo * ueCoefficient;
+                    resultDataByUE[ueName].totalCoefficient += ueCoefficient;
+                });
+            };
         }
     }
 
