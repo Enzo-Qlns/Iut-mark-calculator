@@ -33,9 +33,9 @@ const buttonMark = createButton("Afficher vos moyennes");
 buttonMark.addEventListener('click', (event) => {
     isClicked = true;
     const averageDataByUE = getAverage();
-    const title = document.querySelector("#mainContent > div > div:nth-child(6) > div > h4");
+    const title = document.querySelector("#mainContent > div > div:nth-child(3) > div > header > h4");
 
-    if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Modalités de Contrôle des Connaissances") {
+    if (!Utils.isEmpty(title, averageDataByUE) && title.textContent === "Vos notes") {
         let date = new Date();
         let validate_don = !Utils.isEmpty(localStorage.getItem('validate_don')) ? new Date(localStorage.getItem('validate_don')) : null;
         if (Utils.isEmpty(validate_don)) {
