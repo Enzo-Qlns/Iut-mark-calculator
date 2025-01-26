@@ -48,4 +48,4 @@
 <p>Cette extension est développée indépendamment et n'est pas officiellement affiliée à l'IUT de Reims. Elle est fournie "telle quelle", sans aucune garantie. L'auteur décline toute responsabilité en cas de dommages résultant de l'utilisation de cette extension.</p>
 
 <h5>Condition d'utilisation</h5>
-<pre><code>https://enzo.quelenis.com/dev/iut-mark-calculator/condition_dutilisation.pdf</code></pre>
+<pre><code>https://static.milleweb.fr/perso/projets/calcule-ta-moyenne/regles-de-confidentialite.pdf</code></pre>
